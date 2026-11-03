@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Admin Dashboard
 
-## Getting Started
+Admin Dashboard interface for managing users (View, Add, and Delete) connected to your NestJS 10 + Prisma + PostgreSQL backend.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Admin-Only Authentication**:
+  - Secure login using NestJS `/users/login`.
+  - Verifies that the authenticated account has an `ADMIN` or `SUPER_ADMIN` role.
+  - Denies access with clear error feedback if a regular user tries to log in.
+  - Stores JWT token in an `httpOnly`, `SameSite=Lax` secure cookie.
+- **View Users (`GET /admin/users`)**:
+  - Real-time table displaying ID, full name, email, colored role badges (`USER`, `ADMIN`, `SUPER_ADMIN`, etc.), account status (`Active` / `Blocked`), and creation date.
+  - Search by email, name, or ID.
+  - Filter by role and status.
+  - Summary metrics: Total Users, Admins, Regular Users, and Blocked accounts.
+- **Add User (`POST /admin/users`)**:
+  - Modal form to register new users with email, password, optional first/last name, role selection, and blocked state.
+  - Instant validation and auto-refresh of table data.
+- **Delete User (`DELETE /admin/users/:id`)**:
+  - Confirmation modal with user details.
+  - Safety protection preventing logged-in admins from accidentally deleting their own account.
+- **Render Cold-Start & Health Monitoring**:
+  - Live backend health pill and cold-start counter during spin-up.
+  - 70s timeout tolerance for Render free tier sleep cycles.
+
+## Quick Start
+
+### 1. Configure Backend URL
+Check `.env.local`:
+```env
+# Default: Render deployed backend
+NEST_API_URL=https://nestjs-postgres-prisma.onrender.com
+
+# If running NestJS backend locally on your machine, set:
+# NEST_API_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Run the Development Server
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open [http://localhost:3000](http://localhost:3000) (or whichever port Next.js starts on) to access the Admin Console.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Build & Production Run
+```bash
+npm run build
+npm run start
+```
